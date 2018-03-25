@@ -1,2 +1,18 @@
-# NMF_SEPARATION
-Single Channel Source Separation Using NMF
+# NMF语音分离模型
+## 项目构成
+- DSP.py 处理与谱相关的内容
+- fileManager.py 加载数据集相关
+- main_process.py 主要处理过程，目前包含提取公共空间
+- common_base.py TODO提取子空间的内容重构到这里
+## 算法流程
+1. 对每个声源进行NMF，分解出特征字典W与激活系数H
+2. 计算出所有声源中的公共空间，与不交叉的部分
+3. 合成一个大的特征字典（TODO 这里的思路有待考虑）
+4. 使用这个字典去分解合成后的音频
+5. 用对应部分的激活系数，相应的字典进行点乘恢复幅度谱
+6. 重建相位（多种方式，待测试）
+7. 逆变换重建信号
+## 项目依赖
+- sklearn
+- numpy
+- librosa
