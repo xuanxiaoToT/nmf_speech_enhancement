@@ -94,8 +94,8 @@ def main():
     s2_part = np.dot(H[:, shape_count[1]+shape_count[0]:], W[2]).T
     print(s2_part.shape)
 
-    abs_s1 = s1_part#common_part + s1_part
-    abs_s2 = s2_part#common_part + s2_part
+    abs_s1 = common_part + s1_part
+    abs_s2 = common_part + s2_part
 
     s1_mask = abs_s1 / mix_abs
     s2_mask = abs_s2 / mix_abs

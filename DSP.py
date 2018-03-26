@@ -39,10 +39,10 @@ def reconstruct(f, mask, path):
     mix = librosa.stft(file, n_fft=N, hop_length=N // 2)
     # 这里使用了维纳滤波的合成公式
     speaker = np.array(mix) * np.array(mask)
-    reconstruct_spec(f, speaker, sample_rate)
+    reconstruct_spec(path, speaker, sample_rate)
 
 # 重构语音
-def reconstruct_spec(f, spec, path, sample_rate = 16000):
+def reconstruct_spec(path, spec,  sample_rate = 16000):
     N = (32 * sample_rate) // 1000
     sig = librosa.istft(spec, hop_length=N//2)
     librosa.output.write_wav(path, sig, sample_rate)
