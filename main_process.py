@@ -65,11 +65,29 @@ def main():
         W.append(np.row_stack(res))
         print("计算得到的各说话人独立特征空间元素数：%d" % count)
     # 抛弃原始字典
-    W.pop(0)
-    W.pop(0)
+    base_W1 = W.pop(0)
+    base_W2 = W.pop(0)
     sio.savemat("r_common.mat", {"r_common": np.mat(W[0]).T})
     sio.savemat("r1.mat", {"r1": np.mat(W[1]).T})
     sio.savemat("r2.mat", {"r2": np.mat(W[2]).T})
+
+    # 这里是基础算法的测试部分
+    total_base_w = sum([base_W1.shape[0], base_W2.shape[0]])
+    model.n_components = total_base_w
+    model.n_components_ = total_base_w
+    model.components_ = np.row_stack([base_W1, base_W2])
+    # 加载混合谱
+    mix_spec = getSpec("mix/tsp_speech_separation_mixture.wav")
+    mix_abs = np.abs(mix_spec)
+    # 进行分解
+    H = model.transform(mix_abs.T)
+    s1_part = np.dot(H[:, :base_W1.shape[0]], base_W1).T
+    s2_part = np.dot(H[:, base_W1.shape[0]:], base_W2).T
+    s1_mask = s1_part / mix_abs
+    s2_mask = s2_part / mix_abs
+
+    reconstruct("mix/tsp_speech_separation_mixture.wav", s1_mask, "./s1_sep.wav")
+    reconstruct("mix/tsp_speech_separation_mixture.wav", s2_mask, "./s2_sep.wav")
 
     # 准备一个数组用于将来的分解
     shape_count = [w.shape[0] for w in W]
@@ -88,11 +106,8 @@ def main():
 
     common_part = np.dot(H[:, :shape_count[0]], W[0]).T
     common_part /= 2
-    print(common_part.shape)
     s1_part = np.dot(H[:, shape_count[0]:shape_count[1] + shape_count[0]], W[1]).T
-    print(s1_part.shape)
     s2_part = np.dot(H[:, shape_count[1]+shape_count[0]:], W[2]).T
-    print(s2_part.shape)
 
     abs_s1 = common_part + s1_part
     abs_s2 = common_part + s2_part
