@@ -7,6 +7,7 @@
 
 import scipy.io as sio
 from sklearn.decomposition import NMF
+from sklearn.neural_network import MLPRegressor
 from DSP import *
 from fileManager import find_files
 
@@ -16,6 +17,7 @@ def main():
     主函数，包含分离的主要过程
     :return:
     '''
+    mlp = MLPRegressor(hidden_layer_sizes=(100, 100, 100), max_iter=500)
     speaker = ["s1", "s2", ]  # 这里是说话人的数据文件夹名称
     spec_dic = {}
     for s in speaker:
@@ -30,12 +32,14 @@ def main():
     V = merge(speaker, spec_dic)  # 把这些谱拼成一个大的准备分解（是否拼接音频文件再转换成谱更好）
     del (spec_dic)  # 这里是去除掉之前一步的中间变量，如果数据量大，整个过程很费内存
     W = []
+    H = []
     models = []
     print("清理内存")
     for i, v in enumerate(V):
         model = NMF(n_components=70, init='random', random_state=0)
         models.append(model)
-        model.fit(v.T)
+        H.append(model.fit_transform(v.T))
+
         W.append(np.mat(model.components_))
         # 保存中间字典值
         print("保存说话人%d字典" % i)
@@ -77,7 +81,7 @@ def main():
     model.n_components_ = total_base_w
     model.components_ = np.row_stack([base_W1, base_W2])
     # 加载混合谱
-    mix_spec = getSpec("mix/tsp_speech_separation_mixture.wav")
+    mix_spec = getSpec("mix/mix.wav")
     mix_abs = np.abs(mix_spec)
     # 进行分解
     H = model.transform(mix_abs.T)
@@ -86,8 +90,8 @@ def main():
     s1_mask = s1_part / mix_abs
     s2_mask = s2_part / mix_abs
 
-    reconstruct("mix/tsp_speech_separation_mixture.wav", s1_mask, "./s1_sep.wav")
-    reconstruct("mix/tsp_speech_separation_mixture.wav", s2_mask, "./s2_sep.wav")
+    reconstruct("mix/mix.wav", s1_mask, "./s1_sep.wav")
+    reconstruct("mix/mix.wav", s2_mask, "./s2_sep.wav")
 
     # 准备一个数组用于将来的分解
     shape_count = [w.shape[0] for w in W]
@@ -98,7 +102,7 @@ def main():
     model.n_components_ = total_w
     model.components_ = np.row_stack(W)
     print("加载混合谱")
-    mix_spec = getSpec("mix/tsp_speech_separation_mixture.wav")
+    mix_spec = getSpec("mix/mix.wav")
     print("转换为幅度谱")
     mix_abs = np.abs(mix_spec)
     print("分解得到激活系数")
@@ -115,8 +119,8 @@ def main():
     s1_mask = abs_s1 / mix_abs
     s2_mask = abs_s2 / mix_abs
 
-    reconstruct("mix/tsp_speech_separation_mixture.wav", s1_mask, "./s1_cs.wav")
-    reconstruct("mix/tsp_speech_separation_mixture.wav", s2_mask, "./s2_cs.wav")
+    reconstruct("mix/mix.wav", s1_mask, "./s1_cs.wav")
+    reconstruct("mix/mix.wav", s2_mask, "./s2_cs.wav")
 
 if __name__ == '__main__':
     main()
