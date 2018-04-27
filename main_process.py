@@ -1,13 +1,5 @@
-""" 
-@author: zoutai
-@file: mynmf.py 
-@time: 2018/03/11 
-@description: 
-"""
-
 import scipy.io as sio
 from sklearn.decomposition import NMF
-from sklearn.neural_network import MLPRegressor
 from DSP import *
 from fileManager import find_files
 
