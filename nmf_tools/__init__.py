@@ -1,1 +1,1 @@
-from .cnmf import cmfwisa as CNMF
+from .complex_nmf_cross_iter import cnmf_euc

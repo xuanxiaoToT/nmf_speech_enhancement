@@ -1,4 +1,5 @@
 import scipy.io as sio
+from config import Rank
 from sklearn.decomposition import NMF
 from DSP import *
 from fileManager import find_files
@@ -9,7 +10,7 @@ def main():
     主函数，包含分离的主要过程
     :return:
     '''
-    mlp = MLPRegressor(hidden_layer_sizes=(100, 100, 100), max_iter=500)
+    # mlp = MLPRegressor(hidden_layer_sizes=(100, 100, 100), max_iter=500)
     speaker = ["s1", "s2", ]  # 这里是说话人的数据文件夹名称
     spec_dic = {}
     for s in speaker:
@@ -28,7 +29,7 @@ def main():
     models = []
     print("清理内存")
     for i, v in enumerate(V):
-        model = NMF(n_components=70, init='random', random_state=0)
+        model = NMF(n_components=Rank, init='random', random_state=0)
         models.append(model)
         H.append(model.fit_transform(v.T))
 
@@ -44,8 +45,12 @@ def main():
         err = np.sum(np.power(model.inverse_transform(X) - W[1][i, :], 2)) # 计算MSE误差
         if err < 1:
             common_base.append(W[1][i, :])
-    W.append(np.row_stack(common_base))
-    print("得到公共子空间元素数%d" % W[-1].shape[0])
+    if common_base:
+        W.append(np.row_stack(common_base))
+        print("得到公共子空间元素数%d" % W[-1].shape[0])
+    else:
+        W.append([])
+        print("无公共子空间")
 
     model.n_components_ = W[2].shape[0]
     model.components_ = W[2]
@@ -105,8 +110,12 @@ def main():
     s1_part = np.dot(H[:, shape_count[0]:shape_count[1] + shape_count[0]], W[1]).T
     s2_part = np.dot(H[:, shape_count[1]+shape_count[0]:], W[2]).T
 
-    abs_s1 = common_part + s1_part
-    abs_s2 = common_part + s2_part
+    print("各部分总能量占比")
+    print(np.sum(common_part) * 2)
+    print(np.sum(s1_part + s2_part))
+
+    abs_s1 = s1_part
+    abs_s2 = s2_part
 
     s1_mask = abs_s1 / mix_abs
     s2_mask = abs_s2 / mix_abs
