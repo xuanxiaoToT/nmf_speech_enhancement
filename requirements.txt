@@ -1,0 +1,8 @@
+wave
+pyaudio
+numpy
+librosa
+sklearn
+scipy
+matplotlib
+pystoi  # need to fix 2to3
