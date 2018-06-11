@@ -1,6 +1,7 @@
 # 一些临时文件
 *.mat
 *.zip
+*.log
 # 项目相关
 .idea
 __pycache__/
