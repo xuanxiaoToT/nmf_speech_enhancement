@@ -58,6 +58,12 @@ class Vad:
         str_data = self._stream.__next__()
         _cur_data = np.fromstring(str_data, dtype=self._dtype)
         if len(_cur_data) != self._arr_len:
-            raise Exception('data is too short for vad')
+            raise StopIteration
         _cur = self._vad.is_speech(str_data, self._sample_rate)
         return _cur, _cur_data
+
+    def __iter__(self):
+        return self
+
+    def close(self):
+        self._stream.close()

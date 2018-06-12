@@ -1,3 +1,5 @@
+from . import *
+
 def nmf_enhance(mix_file, W_dic):
     """
     use standard NMF tool to enhance wav file(single channel)

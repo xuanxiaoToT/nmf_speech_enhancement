@@ -23,15 +23,22 @@ class FFT:
         self._stream = value
 
     def __next__(self):
-        while len(self._signal_arr) < self._fft_count:
-            vad_flag, new_sig = self._stream.__next__()
-            np.concatenate([self._signal_arr, new_sig])
-            if vad_len:
-                np.concatenate([self._vad_arr, np.ones(len(new_sig))])
-            else:
-                np.concatenate([self._vad_arr, np.zeros(len(new_sig))])
-        res = np.fft.fft(self._win_func(self._signal_arr[:self._win_len]))
+        try:
+            while len(self._signal_arr) < self._fft_count:
+                vad_flag, new_sig = self._stream.__next__()
+                self._signal_arr = np.concatenate([self._signal_arr, new_sig])
+                if vad_flag:
+                    self._vad_arr = np.concatenate([self._vad_arr, np.ones(len(new_sig))])
+                else:
+                    self._vad_arr = np.concatenate([self._vad_arr, np.zeros(len(new_sig))])
+        except StopIteration:
+            raise StopIteration
+        win_sig = self._win_func(self._win_len) * self._signal_arr[:self._win_len]
+        res = np.fft.fft(win_sig)
         res_flag = (np.sum(self._vad_arr[:self._win_len]) / self._win_len) > 0.5
         self._signal_arr = self._signal_arr[self._win_len:]
         self._vad_arr = self._vad_arr[self._win_len:]
         return res_flag, res
+
+    def __iter__(self):
+        return self

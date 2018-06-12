@@ -1,5 +1,5 @@
 # 算法参数
-sample_rate = 8000
+sample_rate = 16000
 rank = 50
 tol = 0.1
 eps = 1e-5
@@ -25,7 +25,7 @@ out_path = 'output'
 mat_path = 'mats'
 
 # stream setting
-chunk_size = 1024
+chunk_time = int((20 / 1000) * sample_rate)
 
 # vad setting
-vad_len = 30
+vad_len = 20
