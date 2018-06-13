@@ -45,33 +45,7 @@ def plot_spec(signal, sr=sample_rate, title=''):
     pyplot.show()
 
 
-def get_spec(signal, sr=sample_rate):
-    """
-    wrapped the stft in librosa to use the same param
-    fs=sample_rate, win_len=32ms, hop=win_len/2
 
-    Example:
-
-    >>> sig, _ = librosa.load('speech/test/fjcs0_sx409.wav', sr=sample_rate)
-    >>> spec = get_spec(sig)
-    >>> spec.shape[0]==(sample_rate//1000*16)+1
-    True
-    >>> spec.shape[1]==len(sig) // (sample_rate//1000 * 16) + 1
-    True
-    >>> type(spec)
-    <class 'numpy.ndarray'>
-    >>> spec.dtype
-    dtype('complex64')
-
-    :param signal:
-    :param sr:
-    :return:
-    """
-    N = (win_len * sr) // 1000
-    if emphasis:
-        new_signal = pre_emphasise(signal)
-        return librosa.stft(new_signal, n_fft=N, hop_length=N // 2)
-    return librosa.stft(signal, n_fft=N, hop_length=N // 2)
 
 
 def spec2sig(spec, mix_file, sr=sample_rate):

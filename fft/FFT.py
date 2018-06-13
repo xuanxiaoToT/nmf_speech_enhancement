@@ -3,7 +3,7 @@ from . import *
 
 class FFT:
 
-    def __init__(self, stream, sr=sample_rate, win_len=fft_len, hop=hop_rate, window=np.hanning):
+    def __init__(self, stream, sr=sample_rate, win_len=fft_len, hop=hop_rate, window='hann'):
         self._sample_rate = sample_rate
         self._win_len = win_len
         self._fft_count = sr * (win_len / 1000)
@@ -12,7 +12,8 @@ class FFT:
         self._signal_arr = np.array([])
         self._vad_arr = np.array([])
         self._stream = stream
-        self._win_func = window
+        self._win = window
+        self._win_array = get_window(self._win, self._win_len, fftbins=False)
 
     @property
     def stream(self):
@@ -21,6 +22,18 @@ class FFT:
     @stream.setter
     def stream(self, value):
         self._stream = value
+
+    @property
+    def hop_count(self):
+        return self._hop_count
+
+    @property
+    def win(self):
+        return self._win
+
+    @property
+    def fft_count(self):
+        return self._fft_count
 
     def __next__(self):
         try:
@@ -33,7 +46,7 @@ class FFT:
                     self._vad_arr = np.concatenate([self._vad_arr, np.zeros(len(new_sig))])
         except StopIteration:
             raise StopIteration
-        win_sig = self._win_func(self._win_len) * self._signal_arr[:self._win_len]
+        win_sig = self._win_array * self._signal_arr[:self._win_len]
         res = np.fft.fft(win_sig)
         res_flag = (np.sum(self._vad_arr[:self._win_len]) / self._win_len) > 0.5
         self._signal_arr = self._signal_arr[self._win_len:]

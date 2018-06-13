@@ -1,37 +1,36 @@
 from . import *
 
-def nmf_enhance(mix_file, W_dic):
-    """
-    use standard NMF tool to enhance wav file(single channel)
 
-    Example:
-    >>> import scipy.io as sio
-    >>> dic = sio.loadmat('mats/W.mat')
-    >>> clean = nmf_enhance('mix/fjcs0_sx319.wav_0.wav', dic)
-    >>> write_wav(clean, 'doc_test/test.wav')
+class NmfEnhancer:
 
-    :param signal:
-    :param W_signal:
-    :param W_noise:
-    :return:
-    """
-    W_signal = W_dic['w_speech']
-    W_noise = W_dic['w_noise']
-    signal, _ = librosa.load(mix_file, sr=sample_rate)
-    if emphasis:
-        signal = pre_emphasise(signal)
-    mix_spec = get_spec(signal)
-    mix_abs = np.abs(mix_spec)
-    len_sig, len_noise = W_signal.shape[1], W_noise.shape[1]
-    W = np.column_stack([W_signal, W_noise])
-    H, _ = nmf_with_W(mix_abs, W)
-    H_noise = H[len_sig:, :]
-    noise_spec = np.dot(W_noise, H_noise)
-    # Normal way
-    # sig_abs = np.dot(W_signal, H[:len_sig, :])
-    # A trick
-    sig_abs = mix_abs - .9 * noise_spec
-    signal = spec2sig(sig_abs, mix_file)
-    if emphasis:
-        signal = de_emphasise(signal)
-    return signal
+    def __init__(self, stream, dic):
+        self._stream = stream
+        self._hop_count = self._stream.hop_count
+        self._n_fft = self._stream.fft_count
+        self._dict = dic
+        self._spec = np.column_stack([self._stream.__next__()])
+        self._signal_buffer = np.zeros(self._n_fft + self._hop_count)
+        self._window_buffer = np.zeros(self._n_fft + self._hop_count)
+        self._window_arr = get_window(self._stream.win, self._n_fft, fftbins=True)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        spec = self._stream.__next__()
+        spec = self._enhance(spec)
+        spec = np.concatenate((spec, spec[-2:0:-1].conj()), 0)
+        # spec = spec.flatten()
+        y_tmp = self._window_arr * np.fft.ifft(spec).real
+        self._signal_buffer[:self._n_fft] = self._signal_buffer[:self._n_fft] + y_tmp
+        self._window_buffer[:self._n_fft] = self._window_buffer[:self._n_fft] + 1
+        res = self._signal_buffer[:self._hop_count] / self._window_buffer[:self._hop_count]
+        self._signal_buffer = np.concatenate([self._signal_buffer[self._hop_count:], np.zeros(self._hop_count)])
+        self._window_buffer = np.concatenate([self._window_buffer[self._hop_count:], np.zeros(self._hop_count)])
+        return res
+
+    def _enhance(self, spec):
+        abs_spec = np.abs(spec)
+        H = nmf_with_W(np.mat(abs_spec).T, self._dict.total_dict)
+        abs_res = spec - 0.9 * np.dot(self._dict.noise_dict, H[self._dict.rank:])
+        return spec * (abs_res / abs_spec)

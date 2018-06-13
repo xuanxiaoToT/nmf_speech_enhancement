@@ -13,18 +13,7 @@ def cal_W(params):
     """
     #print('未找到模型文件，开始计算')
     mlp = MLPRegressor(max_iter=20000, verbose=False, tol=1e-32, early_stopping=False)
-    noise_spec = None
-    noise_list = os.listdir(noise_path)
-    noise_list = filter(lambda x: 'factory' in x, noise_list)
-    #print('开始加载拼接噪声文件')
-    for n in noise_list:
-        file_name = os.path.join(noise_path, n)
-        signal, _ = librosa.load(file_name, sr=sample_rate)
-        spec = np.abs(get_spec(signal))
-        if noise_spec is None:
-            noise_spec = spec
-        else:
-            noise_spec = np.column_stack([noise_spec, spec])
+
     #print('开始分解噪声谱')
     W_noise, H_noise, _ = nmf(noise_spec, k=params['K'], alpha=params['alpha'], l1_rate=params['l1_rate'])
 
