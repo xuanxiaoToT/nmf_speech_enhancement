@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# @Time    : 6/14/18 12:00 PM
+# @Author  : Liu jiandong
+# @FileName: nmf_enhancer.py
+# @Blog    ：http://meepoljd.com
+
 from . import *
 
 

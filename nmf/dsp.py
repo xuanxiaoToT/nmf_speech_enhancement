@@ -1,11 +1,17 @@
+# -*- coding: utf-8 -*-
+# @Time    : 6/14/18 10:36 AM
+# @Author  : Liu jiandong
+# @FileName: dsp.py
+# @Blog    ：http://meepoljd.com
+
 import numpy as np
 from config import *
+
 
 # 预加重操作，这里不好用  PESQ下降0.1
 def pre_emphasise(signal, rate=emphasis_rate):
     """
     进行信号预加重，增强辅音（高频）部分
-
     Example：
 
     :param signal:

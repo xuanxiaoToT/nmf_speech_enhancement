@@ -1,7 +1,9 @@
-"""
-这是整个的降噪系统框架的实现，包含VAD，噪声字典更新机制。
-VAD使用DNN版本与目标频段比值两种方法测试。
-"""
+# -*- coding: utf-8 -*-
+# @Time    : 6/14/18 10:36 AM
+# @Author  : Liu jiandong
+# @FileName: framework.py
+# @Blog    ：http://meepoljd.com
+
 from stream import StreamBuilder
 from vad import Vad
 from fft import FFT

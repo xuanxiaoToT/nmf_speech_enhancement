@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# @Time    : 6/14/18 10:36 AM
+# @Author  : Liu jiandong
+# @FileName: nmf.py
+# @Blog    ：http://meepoljd.com
+
 from . import *
 
 def nmf(V, k=rank, maxiter=max_iter, alpha=0, l1_rate=0):

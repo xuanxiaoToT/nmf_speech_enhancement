@@ -1,9 +1,15 @@
+# -*- coding: utf-8 -*-
+# @Time    : 6/14/18 10:35 AM
+# @Author  : Liu jiandong
+# @FileName: ns_static_dict.py
+# @Blog    ：http://meepoljd.com
+
 from . import *
 
 
-class n_s_dict:
+class NS_static_dict:
 
-    def __init__(self, K = rank):
+    def __init__(self, K=rank):
         self._rank = K
         self._noise_dict = None
         self._speech_dict = None
