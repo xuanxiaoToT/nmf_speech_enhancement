@@ -3,7 +3,3 @@
 # @Author  : Liu jiandong
 # @FileName: __init__.py
 # @Blog    ：http://meepoljd.com
-
-import librosa
-from scipy.signal import get_window
-from nmf import nmf, nmf_with_W

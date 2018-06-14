@@ -4,7 +4,10 @@
 # @FileName: nmf_enhancer.py
 # @Blog    ：http://meepoljd.com
 
-from . import *
+import numpy as np
+from scipy.signal import get_window
+
+import nmf
 
 
 class NmfEnhancer:
@@ -14,6 +17,7 @@ class NmfEnhancer:
         self._hop_count = self._stream.hop_count
         self._n_fft = self._stream.fft_count
         self._dict = dic
+        self._dict.build_dic()
         self._spec = np.column_stack([self._stream.__next__()])
         self._signal_buffer = np.zeros(self._n_fft + self._hop_count)
         self._window_buffer = np.zeros(self._n_fft + self._hop_count)
@@ -37,6 +41,6 @@ class NmfEnhancer:
 
     def _enhance(self, spec):
         abs_spec = np.abs(spec)
-        H = nmf_with_W(np.mat(abs_spec).T, self._dict.total_dict)
-        abs_res = spec - 0.9 * np.dot(self._dict.noise_dict, H[self._dict.rank:])
+        act = nmf.decompose_with_dict(np.mat(abs_spec).T, self._dict.total_dict)
+        abs_res = spec - 0.9 * np.dot(self._dict.noise_dict, act[self._dict.rank:])
         return spec * (abs_res / abs_spec)
