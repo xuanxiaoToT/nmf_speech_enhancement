@@ -6,4 +6,4 @@
 
 import librosa
 from scipy.signal import get_window
-from nmf import *
+from nmf import nmf, nmf_with_W

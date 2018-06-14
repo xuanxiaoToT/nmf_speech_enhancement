@@ -6,5 +6,6 @@
 
 import webrtcvad
 import numpy as np
-from config import *
+
+from config import sample_rate, vad_len
 from .Vad import Vad

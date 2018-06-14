@@ -6,5 +6,6 @@
 
 import numpy as np
 from scipy.signal import get_window
-from config import *
+
+from config import sample_rate, fft_len, hop_rate
 from .FFT import FFT

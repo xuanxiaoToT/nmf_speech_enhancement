@@ -6,6 +6,8 @@
 
 import os
 import librosa
-from nmf import *
-from config import *
-from .utils import *
+import numpy as np
+
+from nmf import nmf
+from config import rank, sample_rate, fft_len, common_space_err
+from .utils import get_spec, get_common_space, remove_common_space

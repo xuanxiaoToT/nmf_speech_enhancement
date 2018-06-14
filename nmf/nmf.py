@@ -6,6 +6,7 @@
 
 from . import *
 
+
 def nmf(V, k=rank, maxiter=max_iter, alpha=0, l1_rate=0):
     """
     basic NMF tool, use it to get W and H

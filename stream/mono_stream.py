@@ -50,7 +50,6 @@ class RecordStream(MonoStream):
         return str_data
 
 
-
 class FileStream(MonoStream):
 
     @property
