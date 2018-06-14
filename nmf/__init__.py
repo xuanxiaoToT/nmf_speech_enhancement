@@ -5,8 +5,9 @@
 # @Blog    ：http://meepoljd.com
 
 import numpy as np
-from sklearn.decomposition import NMF
+
 
 from config import rank, max_iter
-import nmf.nmf as nmf
-import nmf.nmf_with_W as nmf_with_W
+
+from .decompose import decompose
+from .decompose import decompose_with_dict

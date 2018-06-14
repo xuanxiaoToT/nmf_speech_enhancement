@@ -7,7 +7,7 @@
 from . import *
 
 
-class NS_static_dict:
+class StaticDict:
 
     def __init__(self, K=rank):
         self._rank = K
