@@ -11,17 +11,34 @@ from . import *
 class MonoStream:
 
     def __init__(self):
-        self._chunk_size = 1024
+        self._duration = 0
         self._dtype = np.int16
+        self._sample_rate = 0
         self._stream = None
 
     @property
-    def chunk_size(self):
-        return self._chunk_size
+    def sample_rate(self):
+        return self._sample_rate
 
-    @chunk_size.setter
-    def chunk_size(self, value):
-        self._chunk_size = value
+    @sample_rate.setter
+    def sample_rate(self, value):
+        self._sample_rate = value
+
+    @property
+    def duration(self):
+        return self._duration
+
+    @duration.setter
+    def duration(self, value):
+        self._duration = value
+
+    @property
+    def dtype(self):
+        return self._dtype
+
+    @dtype.setter
+    def dtype(self, value):
+        self._dtype = value
 
     def close(self):
         try:
@@ -46,7 +63,7 @@ class RecordStream(MonoStream):
         self._stream = value
 
     def __next__(self):
-        str_data = self._stream.read(self._chunk_size)
+        str_data = self._stream.read(self._duration)
         return str_data
 
 
@@ -63,7 +80,7 @@ class FileStream(MonoStream):
         self._stream = value
 
     def __next__(self):
-        str_data = self._stream.readframes(self._chunk_size)
+        str_data = self._stream.readframes(self._duration)
         if str_data == b'':
             raise StopIteration()
         return str_data
