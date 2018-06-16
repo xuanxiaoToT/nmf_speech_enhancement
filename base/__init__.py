@@ -3,3 +3,5 @@
 # @Author  : Liu jiandong
 # @FileName: __init__.py
 # @Blog    ：http://meepoljd.com
+
+from .static_dict import StaticDict

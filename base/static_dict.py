@@ -14,14 +14,14 @@ import nmf
 
 class StaticDict:
 
-    def __init__(self, noise_path, speech_path, rank=config.rank):
+    def __init__(self, noise_path, speech_path, rank):
         self._rank = rank
         self._noise_dict = None
         self._speech_dict = None
         self._total_dict = None
         self._n_fft = 0
         self._win = ''
-        self._hop_len = 0
+        self._hop = 0
         self._noise_path = noise_path
         self._speech_path = speech_path
 
@@ -50,12 +50,12 @@ class StaticDict:
         self._n_fft = value
 
     @property
-    def hop_len(self):
-        return self._hop_len
+    def hop(self):
+        return self._hop
 
-    @hop_len.setter
-    def hop_len(self, value):
-        self._hop_len = value
+    @hop.setter
+    def hop(self, value):
+        self._hop = value
 
     @property
     def win(self):
@@ -71,7 +71,7 @@ class StaticDict:
         for file in _list:
             file_name = os.path.join(path, file)
             signal, _ = librosa.load(file_name, sr=config.sample_rate)
-            spec = librosa.stft(signal, n_fft=self._n_fft, hop_length=self._hop_len, window=self._win)
+            spec = librosa.stft(signal, n_fft=self._n_fft, hop_length=self._hop, window=self._win)
             abs_spec = np.abs(spec)
             if _spec is None:
                 _spec = abs_spec
@@ -81,15 +81,15 @@ class StaticDict:
 
     def build_noise(self):
         _noise_spec = self._gen_spec(self._noise_path)
-        self._noise_dict, _ = nmf.decompose(_noise_spec)
+        self._noise_dict, _ = nmf.decompose(_noise_spec.T, self._rank)
 
     def build_speech(self):
         _speech_spec = self._gen_spec(self._speech_path)
-        self._speech_dict, _ = nmf.decompose(_speech_spec)
+        self._speech_dict, _ = nmf.decompose(_speech_spec.T, self._rank)
 
     def merge_dic(self):
         if self._noise_dict is not None and self._speech_dict is not None:
-            self._total_dict = np.column_stack([self._speech_dict, self._noise_dict])
+            self._total_dict = np.row_stack([self._speech_dict, self._noise_dict])
 
     def init_dic(self):
         self.build_noise()
