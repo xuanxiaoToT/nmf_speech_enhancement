@@ -3,7 +3,6 @@ sample_rate = 16000
 rank = 50
 tol = 0.1
 eps = 1e-5
-max_iter = 200000
 fft_len = 32  # 单位ms
 hop_rate = 0.5
 
