@@ -83,7 +83,7 @@ class FileStream(MonoStream):
         str_data = self._stream.readframes(self._duration)
         if str_data == b'':
             raise StopIteration()
-        elif int(len(str_data) / 2.0) < int(len(str_data) / 2.0):
-            str_data = str_data + [b'\x00\x00' for _ in range(int(self.sample_rate*(self.duration/1000))
-                                                              - int(len(str_data) / 2.0))]
+        elif int(len(str_data) / 2.0) < 2*self._duration:
+            for _ in range(2*self._duration - len(str_data)):
+                str_data += b'\x00'
         return str_data
