@@ -28,17 +28,27 @@ class NmfEnhancer:
         return self
 
     def __next__(self):
-        _, spec = self._stream.__next__()
-        spec = np.asarray(self._enhance(spec))[0]
-        spec = np.concatenate((spec, spec[-2:0:-1].conj()), 0)
-        real_part = fft.ifft(spec).real
-        y_tmp = self._window_arr * real_part
-        self._signal_buffer[:self._stream.n_fft] = self._signal_buffer[:self._stream.n_fft] + y_tmp
-        self._window_buffer[:self._stream.n_fft] = self._window_buffer[:self._stream.n_fft] + 1
-        res = self._signal_buffer[:self._stream.hop] / self._window_buffer[:self._stream.hop]
-        self._signal_buffer = np.concatenate([self._signal_buffer[self._stream.hop:], np.zeros(self._stream.hop)])
-        self._window_buffer = np.concatenate([self._window_buffer[self._stream.hop:], np.zeros(self._stream.hop)])
-        return res
+        try:
+            _, spec = self._stream.__next__()
+            spec = np.asarray(self._enhance(spec))[0]
+            spec = np.concatenate((spec, spec[-2:0:-1].conj()), 0)
+            real_part = fft.ifft(spec).real
+            y_tmp = self._window_arr * real_part
+            self._signal_buffer[:self._stream.n_fft] = self._signal_buffer[:self._stream.n_fft] + y_tmp
+            self._window_buffer[:self._stream.n_fft] = self._window_buffer[:self._stream.n_fft] + 1
+            res = self._signal_buffer[:self._stream.hop] / self._window_buffer[:self._stream.hop]
+            self._signal_buffer = np.concatenate([self._signal_buffer[self._stream.hop:], np.zeros(self._stream.hop)])
+            self._window_buffer = np.concatenate([self._window_buffer[self._stream.hop:], np.zeros(self._stream.hop)])
+            return res
+        except StopIteration:
+            if np.all(self._signal_buffer == 0) and np.all(self._window_buffer == 0):
+                raise StopIteration
+            else:
+                index = self._window_buffer != 0
+                res = self._signal_buffer[index] / self._window_buffer[index]
+                self._signal_buffer = np.zeros(self._stream.n_fft + self._stream.hop)
+                self._window_buffer = np.zeros(self._stream.n_fft + self._stream.hop)
+                return res
 
     def _enhance(self, spec):
         abs_spec = np.abs(np.mat(spec))
