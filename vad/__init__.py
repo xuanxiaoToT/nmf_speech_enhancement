@@ -4,8 +4,4 @@
 # @FileName: __init__.py
 # @Blog    ：http://meepoljd.com
 
-import webrtcvad
-import numpy as np
-
-from config import sample_rate, vad_len
 from .Vad import Vad

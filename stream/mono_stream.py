@@ -5,10 +5,13 @@
 # @Blog    ：http://meepoljd.com
 
 
-from . import *
+import wave
+import pyaudio
+
+from base import BaseClass
 
 
-class MonoStream:
+class MonoStream(BaseClass):
 
     def __init__(self):
         self._duration = 0
@@ -24,13 +27,7 @@ class MonoStream:
     def sample_rate(self, value):
         self._sample_rate = value
 
-    @property
-    def sample_width(self):
-        return self._sample_width
 
-    @sample_width.setter
-    def sample_width(self, value):
-        self._sample_width = value
 
     @property
     def duration(self):

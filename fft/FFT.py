@@ -8,9 +8,10 @@
 import numpy as np
 import scipy.signal as signal
 import scipy.fftpack as fft
+from base import BaseClass
 
 
-class FFT:
+class FFT(BaseClass):
 
     def __init__(self, stream, n_fft_ms, hop_ms, window='hann'):
         self._sample_rate = stream.sample_rate
@@ -21,41 +22,6 @@ class FFT:
         self._stream = stream
         self._win = window
         self._win_array = signal.get_window(self._win, self._n_fft, fftbins=False)
-
-    @property
-    def sample_rate(self):
-        if hasattr(self, '_sample_rate'):
-            return self._sample_rate
-        else:
-            return self._stream.sample_rate
-
-    @property
-    def dtype(self):
-        if hasattr(self, '_dtype'):
-            return self._dtype
-        else:
-            return self._stream.dtype
-
-    @property
-    def hop(self):
-        if hasattr(self, '_hop'):
-            return self._hop
-        else:
-            return self._stream.hop
-
-    @property
-    def win(self):
-        if hasattr(self, '_win'):
-            return self._win
-        else:
-            return self._stream.win
-
-    @property
-    def n_fft(self):
-        if hasattr(self, '_n_fft'):
-            return self._n_fft
-        else:
-            return self._stream.n_fft
 
     def __next__(self):
         while len(self._signal_arr) < self._n_fft:

@@ -3,18 +3,19 @@
 # @Author  : Liu jiandong
 # @FileName: stream_builder.py
 # @Blog    ：http://meepoljd.com
+import wave
+import pyaudio
+import numpy as np
 
-
-from . import *
+from .mono_stream import RecordStream, FileStream
 
 
 class StreamBuilder:
 
-    def __init__(self, stream_type, sr, duration, dtype=np.int16, filename=''):
+    def __init__(self, stream_type, sr, duration, filename=''):
         self._stream_type = stream_type
         self._sample_rate = sr
         self._filename = filename
-        self._dtype = dtype
 
         if self._stream_type == 'record':
             self._stream = RecordStream()
@@ -34,12 +35,9 @@ class StreamBuilder:
             self._sample_rate = wav.getframerate()
             self._sample_width = wav.getsampwidth()
             self._stream.sample_rate = self._sample_rate
+            self._stream.sample_width = self._sample_width
             self._duration = int((duration / 1000) * self._sample_rate)
             self._stream.duration = self._duration
 
     def get_instance(self):
         return self._stream
-
-    def _parse_ptype(self):
-        if self._dtype == np.int16:
-            return pyaudio.paInt16

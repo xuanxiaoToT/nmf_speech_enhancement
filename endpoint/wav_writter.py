@@ -7,32 +7,16 @@
 import wave
 import numpy as np
 
+from base import BaseClass
 
-class WavWriter:
+
+class WavWriter(BaseClass):
 
     def __init__(self, stream, output):
         self._stream = stream
         self._sample_rate = stream.sample_rate
-        self._dtype = stream.dtype
         self._output = output
         self._buffer = np.array([])
-
-    @property
-    def sample_rate(self):
-        if hasattr(self, '_sample_rate'):
-            return self._sample_rate
-        else:
-            return self._stream.sample_rate
-
-    @property
-    def dtype(self):
-        if hasattr(self, '_dtype'):
-            return self._dtype
-        else:
-            return self._stream.dtype
-
-    def __iter__(self):
-        return self
 
     def __next__(self):
         try:
@@ -42,9 +26,8 @@ class WavWriter:
         except StopIteration:
             f = wave.open(self._output, 'wb')
             f.setnchannels(1)
-            if self._dtype == np.int16:
-                f.setsampwidth(2)
-            f.setframerate(self._sample_rate)
-            f.writeframes(self._buffer.astype(self._dtype).tostring())
+            f.setsampwidth(self.sample_width)
+            f.setframerate(self.sample_rate)
+            f.writeframes(self._buffer.astype(self.width2dtype()).tostring())
             f.close()
             raise StopIteration

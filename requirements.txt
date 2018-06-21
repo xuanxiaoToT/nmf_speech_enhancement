@@ -1,3 +1,4 @@
+webrtcvad
 wave
 pyaudio
 numpy
