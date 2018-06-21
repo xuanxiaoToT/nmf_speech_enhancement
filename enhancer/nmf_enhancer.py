@@ -24,6 +24,20 @@ class NmfEnhancer:
         self._window_buffer = np.zeros(self._stream.n_fft + self._stream.hop)
         self._window_arr = get_window(self._stream.win, self._stream.n_fft, fftbins=True)
 
+    @property
+    def sample_rate(self):
+        if hasattr(self, '_sample_rate'):
+            return self._sample_rate
+        else:
+            return self._stream.sample_rate
+
+    @property
+    def dtype(self):
+        if hasattr(self, '_dtype'):
+            return self._dtype
+        else:
+            return self._stream.dtype
+
     def __iter__(self):
         return self
 

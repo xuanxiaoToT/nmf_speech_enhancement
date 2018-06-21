@@ -30,6 +30,13 @@ class FFT:
             return self._stream.sample_rate
 
     @property
+    def dtype(self):
+        if hasattr(self, '_dtype'):
+            return self._dtype
+        else:
+            return self._stream.dtype
+
+    @property
     def hop(self):
         if hasattr(self, '_hop'):
             return self._hop

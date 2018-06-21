@@ -10,6 +10,7 @@ from vad import Vad
 from fft import FFT
 from base import StaticDict
 from enhancer import NmfEnhancer
+from endpoint import  WavWriter
 
 
 def main():
@@ -19,8 +20,9 @@ def main():
     fft_stream = FFT(vad_stream, 32, 16)
     dic = StaticDict('data/debug/noise', 'data/debug/speech', rank=config.rank)
     enhancer_stream = NmfEnhancer(fft_stream, dic)
-    for res in enhancer_stream:
-        print(res)
+    wav_writer = WavWriter(enhancer_stream, 'out.wav')
+    for _ in wav_writer:
+        pass
 
 
 if __name__ == '__main__':
