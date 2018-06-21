@@ -12,8 +12,8 @@ class MonoStream:
 
     def __init__(self):
         self._duration = 0
-        self._dtype = np.int16
         self._sample_rate = 0
+        self._sample_width = 0
         self._stream = None
 
     @property
@@ -25,20 +25,20 @@ class MonoStream:
         self._sample_rate = value
 
     @property
+    def sample_width(self):
+        return self._sample_width
+
+    @sample_width.setter
+    def sample_width(self, value):
+        self._sample_width = value
+
+    @property
     def duration(self):
         return self._duration
 
     @duration.setter
     def duration(self, value):
         self._duration = value
-
-    @property
-    def dtype(self):
-        return self._dtype
-
-    @dtype.setter
-    def dtype(self, value):
-        self._dtype = value
 
     def close(self):
         try:

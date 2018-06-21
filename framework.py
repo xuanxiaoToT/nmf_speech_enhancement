@@ -8,9 +8,9 @@ import config
 from stream import StreamBuilder
 from vad import Vad
 from fft import FFT
-from base import StaticDict
+from dictionary import StaticDict
 from enhancer import NmfEnhancer
-from endpoint import  WavWriter
+from endpoint import WavWriter
 
 
 def main():

@@ -32,6 +32,7 @@ class StreamBuilder:
             wav = wave.open(filename, 'r')
             self._stream.stream = wav
             self._sample_rate = wav.getframerate()
+            self._sample_width = wav.getsampwidth()
             self._stream.sample_rate = self._sample_rate
             self._duration = int((duration / 1000) * self._sample_rate)
             self._stream.duration = self._duration
