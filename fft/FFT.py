@@ -33,9 +33,9 @@ class FFT(BaseClass):
                 self._vad_arr = np.concatenate([self._vad_arr, np.zeros(len(new_sig))])
         win_sig = self._win_array * self._signal_arr[:self._n_fft]
         res = fft.fft(win_sig)
-        res_flag = (np.mean(self._vad_arr[:self._n_fft])) > 0.5
-        self._signal_arr = self._signal_arr[self._n_fft:]
-        self._vad_arr = self._vad_arr[self._n_fft:]
+        res_flag = (np.mean(self._vad_arr[:self.n_fft])) > 0.5
+        self._signal_arr = self._signal_arr[self.hop:]
+        self._vad_arr = self._vad_arr[self.hop:]
         return res_flag, res[:(int(1 + self._n_fft // 2))]
 
     def __iter__(self):
