@@ -51,6 +51,8 @@ class NmfEnhancer(BaseClass):
     def _enhance(self, spec):
         abs_spec = np.abs(np.mat(spec))
         act = nmf.decompose_with_dict(abs_spec, self._dict.total_dict)
-        abs_res = spec - 0.9 * np.dot(act[:, self._dict.rank:], self._dict.noise_dict)
+        abs_res = abs_spec - 0.9 * np.dot(act[:, self._dict.rank:], self._dict.noise_dict)
+        # abs_res = np.dot(act[:, :self._dict.rank], self._dict.speech_dict)
         mask = abs_res / abs_spec
-        return np.multiply(spec, mask)
+        norm = np.sum(abs_spec) / np.sum(abs_res)
+        return np.multiply(spec, mask) * norm

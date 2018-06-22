@@ -14,7 +14,7 @@ from endpoint import WavWriter
 
 
 def main():
-    builder = StreamBuilder(stream_type='file', filename='data/speech/train/fadg0_sa1.wav', sr=-1, duration=30)
+    builder = StreamBuilder(stream_type='file', filename='data/speech/train/fadg0_sa1.wav')
     file_stream = builder.get_instance()
     vad_stream = Vad(file_stream)
     fft_stream = FFT(vad_stream, 32, 16)

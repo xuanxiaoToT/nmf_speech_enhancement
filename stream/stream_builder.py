@@ -12,7 +12,7 @@ from .mono_stream import RecordStream, FileStream
 
 class StreamBuilder:
 
-    def __init__(self, stream_type, sr, duration, filename=''):
+    def __init__(self, stream_type, duration=30, sr=-1, filename=''):
         self._stream_type = stream_type
         self._sample_rate = sr
         self._filename = filename
@@ -23,14 +23,14 @@ class StreamBuilder:
             self._duration = int((duration / 1000) * self._sample_rate)
             self._stream.duration = self._duration
             p = pyaudio.PyAudio()
-            new_stream = p.open(rate=self._sample_rate, format=self._parse_ptype(), channels=1, input=True,
+            new_stream = p.open(rate=self._sample_rate, format=self._sample_width, channels=1, input=True,
                                 frames_per_buffer=self._duration)
             self._stream.stream = new_stream
         elif self._stream_type == 'file':
             self._stream = FileStream()
             if filename == '':
                 raise Exception('Build a file stream without filename')
-            wav = wave.open(filename, 'r')
+            wav = wave.open(filename, 'rb')
             self._stream.stream = wav
             self._sample_rate = wav.getframerate()
             self._sample_width = wav.getsampwidth()
